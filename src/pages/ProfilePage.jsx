@@ -59,72 +59,104 @@ function ProfilePage() {
   if (profile.goal === 'lose') targetCalories = Math.round(tdee * 0.85)
   if (profile.goal === 'gain') targetCalories = Math.round(tdee * 1.15)
 
-  // БЖУ: белки 25%, жиры 25%, углеводы 50%
   const targetProteins = Math.round(targetCalories * 0.25 / 4)
   const targetFats = Math.round(targetCalories * 0.25 / 9)
   const targetCarbs = Math.round(targetCalories * 0.5 / 4)
+
+  const hasData = w > 0 && h > 0 && a > 0
 
   return (
     <>
       <h1>Профиль</h1>
 
-      <form onSubmit={handleSubmit} style={{ maxWidth: 400 }}>
-        <div style={{ marginBottom: 10 }}>
-          <label>Пол:</label><br />
-          <select name="gender" value={profile.gender} onChange={handleChange}>
-            <option value="female">Женский</option>
-            <option value="male">Мужской</option>
-          </select>
-        </div>
+      <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap' }}>
+        {/* Форма */}
+        <form onSubmit={handleSubmit} style={{ flex: '1 1 320px', maxWidth: 400 }}>
+          <div className="form-group">
+            <label>Пол</label>
+            <select name="gender" value={profile.gender} onChange={handleChange}>
+              <option value="female">Женский</option>
+              <option value="male">Мужской</option>
+            </select>
+          </div>
 
-        <div style={{ marginBottom: 10 }}>
-          <label>Вес (кг):</label><br />
-          <input name="weight" type="number" step="0.1" value={profile.weight} onChange={handleChange} style={{ width: '100%' }} />
-        </div>
+          <div className="form-group">
+            <label>Вес (кг)</label>
+            <input name="weight" type="number" step="0.1" value={profile.weight} onChange={handleChange} />
+          </div>
 
-        <div style={{ marginBottom: 10 }}>
-          <label>Рост (см):</label><br />
-          <input name="height" type="number" value={profile.height} onChange={handleChange} style={{ width: '100%' }} />
-        </div>
+          <div className="form-group">
+            <label>Рост (см)</label>
+            <input name="height" type="number" value={profile.height} onChange={handleChange} />
+          </div>
 
-        <div style={{ marginBottom: 10 }}>
-          <label>Возраст:</label><br />
-          <input name="age" type="number" value={profile.age} onChange={handleChange} style={{ width: '100%' }} />
-        </div>
+          <div className="form-group">
+            <label>Возраст</label>
+            <input name="age" type="number" value={profile.age} onChange={handleChange} />
+          </div>
 
-        <div style={{ marginBottom: 10 }}>
-          <label>Уровень активности:</label><br />
-          <select name="activity" value={profile.activity} onChange={handleChange}>
-            {ACTIVITY_LEVELS.map(l => (
-              <option key={l.value} value={l.value}>{l.label}</option>
-            ))}
-          </select>
-        </div>
+          <div className="form-group">
+            <label>Уровень активности</label>
+            <select name="activity" value={profile.activity} onChange={handleChange}>
+              {ACTIVITY_LEVELS.map(l => (
+                <option key={l.value} value={l.value}>{l.label}</option>
+              ))}
+            </select>
+          </div>
 
-        <div style={{ marginBottom: 10 }}>
-          <label>Цель:</label><br />
-          <select name="goal" value={profile.goal} onChange={handleChange}>
-            {GOALS.map(g => (
-              <option key={g.value} value={g.value}>{g.label}</option>
-            ))}
-          </select>
-        </div>
+          <div className="form-group">
+            <label>Цель</label>
+            <select name="goal" value={profile.goal} onChange={handleChange}>
+              {GOALS.map(g => (
+                <option key={g.value} value={g.value}>{g.label}</option>
+              ))}
+            </select>
+          </div>
 
-        <button type="submit">Сохранить</button>
-        {saved && <span style={{ marginLeft: 10, color: '#4caf50' }}>Сохранено!</span>}
-      </form>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 24 }}>
+            <button type="submit">Сохранить</button>
+            {saved && <span className="success">✓ Сохранено!</span>}
+          </div>
+        </form>
 
-      {w > 0 && h > 0 && a > 0 && (
-        <div style={{ marginTop: 24, padding: 16, background: '#f5f5f5', borderRadius: 8, maxWidth: 400 }}>
-          <h3>Ваши нормы на день</h3>
-          <p><strong>BMR:</strong> {Math.round(bmr)} ккал (базальный метаболизм)</p>
-          <p><strong>TDEE:</strong> {tdee} ккал (с учётом активности)</p>
-          <p><strong>Цель:</strong> {targetCalories} ккал</p>
-          <hr style={{ margin: '10px 0' }} />
-          <p><strong>Белки:</strong> {targetProteins} г</p>
-          <p><strong>Жиры:</strong> {targetFats} г</p>
-          <p><strong>Углеводы:</strong> {targetCarbs} г</p>
-        </div>
+        {/* Результаты справа */}
+        {hasData && (
+          <div className="profile-result" style={{ flex: '1 1 280px', alignSelf: 'start' }}>
+            <h3>Ваши нормы на день</h3>
+            <div style={{ marginBottom: 10 }}>
+              <div style={{ fontSize: 13, color: '#888' }}>Базальный метаболизм (BMR)</div>
+              <div style={{ fontWeight: 600, fontSize: 20 }}>{Math.round(bmr)} <span style={{ fontSize: 14, fontWeight: 400 }}>ккал</span></div>
+            </div>
+            <div style={{ marginBottom: 10 }}>
+              <div style={{ fontSize: 13, color: '#888' }}>С учётом активности (TDEE)</div>
+              <div style={{ fontWeight: 600, fontSize: 18 }}>{tdee} <span style={{ fontSize: 14, fontWeight: 400 }}>ккал</span></div>
+            </div>
+            <hr />
+            <div style={{ marginBottom: 10 }}>
+              <div style={{ fontSize: 13, color: '#888' }}>Целевой калораж</div>
+              <div style={{ fontWeight: 700, fontSize: 24, color: '#4caf50' }}>{targetCalories} <span style={{ fontSize: 14, fontWeight: 400 }}>ккал</span></div>
+            </div>
+            <hr />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+              <div>
+                <div style={{ fontSize: 12, color: '#2196f3', fontWeight: 600 }}>Белки</div>
+                <div style={{ fontWeight: 700, fontSize: 18 }}>{targetProteins} <span style={{ fontSize: 13, fontWeight: 400 }}>г</span></div>
+              </div>
+              <div>
+                <div style={{ fontSize: 12, color: '#ff9800', fontWeight: 600 }}>Жиры</div>
+                <div style={{ fontWeight: 700, fontSize: 18 }}>{targetFats} <span style={{ fontSize: 13, fontWeight: 400 }}>г</span></div>
+              </div>
+              <div>
+                <div style={{ fontSize: 12, color: '#9c27b0', fontWeight: 600 }}>Углеводы</div>
+                <div style={{ fontWeight: 700, fontSize: 18 }}>{targetCarbs} <span style={{ fontSize: 13, fontWeight: 400 }}>г</span></div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {!hasData && (
+        <p className="empty" style={{ marginTop: 16 }}>Заполните данные для расчёта норм</p>
       )}
     </>
   )
