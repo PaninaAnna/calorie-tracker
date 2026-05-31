@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 
 const MEAL_TYPES = ['Завтрак', 'Обед', 'Ужин', 'Перекус']
 
@@ -209,7 +210,7 @@ function DiaryPage() {
 
       {!targets && (
         <div className="counter">
-          <span style={{ color: '#888' }}>Заполните <a href="/profile">профиль</a> для отображения целей</span>
+          <span style={{ color: '#888' }}>Заполните <Link to="/profile">профиль</Link> для отображения целей</span>
         </div>
       )}
 
