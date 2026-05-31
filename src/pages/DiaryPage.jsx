@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 
 const MEAL_TABS = ['Завтрак', 'Обед', 'Ужин', 'Перекус']
 
@@ -22,11 +22,36 @@ function DiaryPage() {
 
   const products = JSON.parse(localStorage.getItem('products') || '[]')
 
+  // Профиль и цели
+  const profile = useMemo(() => {
+    const saved = localStorage.getItem('profile')
+    return saved ? JSON.parse(saved) : null
+  }, [])
+
+  const targets = useMemo(() => {
+    if (!profile || !profile.weight || !profile.height || !profile.age) return null
+    const w = parseFloat(profile.weight)
+    const h = parseFloat(profile.height)
+    const a = parseFloat(profile.age)
+    let bmr = profile.gender === 'male'
+      ? 10 * w + 6.25 * h - 5 * a + 5
+      : 10 * w + 6.25 * h - 5 * a - 161
+    const tdee = Math.round(bmr * profile.activity)
+    let targetCalories = tdee
+    if (profile.goal === 'lose') targetCalories = Math.round(tdee * 0.85)
+    if (profile.goal === 'gain') targetCalories = Math.round(tdee * 1.15)
+    return {
+      calories: targetCalories,
+      proteins: Math.round(targetCalories * 0.25 / 4),
+      fats: Math.round(targetCalories * 0.25 / 9),
+      carbs: Math.round(targetCalories * 0.5 / 4)
+    }
+  }, [profile])
+
   const filteredEntries = diary.filter(
     e => e.mealType === activeTab && e.date === selectedDate
   )
 
-  // КБЖУ за выбранный день
   const dayEntries = diary.filter(e => e.date === selectedDate)
   const dayTotals = dayEntries.reduce((acc, e) => {
     acc.calories += e.calories
@@ -85,17 +110,21 @@ function DiaryPage() {
     localStorage.setItem('diary', JSON.stringify(updated))
   }
 
+  const getRemainColor = (current, target) => {
+    if (!target) return '#333'
+    const percent = current / target
+    if (percent > 1) return '#e53935'
+    if (percent > 0.9) return '#f9a825'
+    return '#4caf50'
+  }
+
   return (
     <>
       <h1>Дневник питания</h1>
 
       <div style={{ marginBottom: 20 }}>
         <label>Дата: </label>
-        <input
-          type="date"
-          value={selectedDate}
-          onChange={handleDateChange}
-        />
+        <input type="date" value={selectedDate} onChange={handleDateChange} />
       </div>
 
       <div className="counter">
@@ -104,6 +133,28 @@ function DiaryPage() {
         Б: {dayTotals.proteins.toFixed(1)}г |{' '}
         Ж: {dayTotals.fats.toFixed(1)}г |{' '}
         У: {dayTotals.carbs.toFixed(1)}г
+
+        {targets && (
+          <div style={{ marginTop: 8, fontSize: 14 }}>
+            <span>Цель: {targets.calories} ккал</span>
+            {' | '}
+            <span style={{ color: getRemainColor(dayTotals.calories, targets.calories) }}>
+              Осталось: {Math.max(0, targets.calories - dayTotals.calories)} ккал
+            </span>
+            {dayTotals.calories > targets.calories && (
+              <span style={{ color: '#e53935', marginLeft: 8 }}>Перебор на {dayTotals.calories - targets.calories} ккал</span>
+            )}
+            <div style={{ marginTop: 4, color: '#666' }}>
+              Б: {targets.proteins}г | Ж: {targets.fats}г | У: {targets.carbs}г (цель)
+            </div>
+          </div>
+        )}
+
+        {!targets && (
+          <div style={{ marginTop: 8, fontSize: 14, color: '#888' }}>
+            Заполните <a href="/profile">профиль</a> для расчёта норм
+          </div>
+        )}
       </div>
 
       <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
