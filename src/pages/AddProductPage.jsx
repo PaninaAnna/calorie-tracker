@@ -62,22 +62,22 @@ function AddProductPage() {
 
         <div className="form-group">
           <label>Название</label>
-          <input name="name" value={form.name} onChange={handleChange} />
+          <input name="name" maxLength="60" value={form.name} onChange={handleChange} />
         </div>
 
         <div className="form-group">
           <label>Белки (г на 100г)</label>
-          <input name="proteins" type="number" step="0.1" value={form.proteins} onChange={handleChange} />
+          <input name="proteins" type="number" step="0.1" min="0" max="100" value={form.proteins} onChange={handleChange} />
         </div>
 
         <div className="form-group">
           <label>Жиры (г на 100г)</label>
-          <input name="fats" type="number" step="0.1" value={form.fats} onChange={handleChange} />
+          <input name="fats" type="number" step="0.1" min="0" max="100" value={form.fats} onChange={handleChange} />
         </div>
 
         <div className="form-group">
           <label>Углеводы (г на 100г)</label>
-          <input name="carbs" type="number" step="0.1" value={form.carbs} onChange={handleChange} />
+          <input name="carbs" type="number" step="0.1" min="0" max="100" value={form.carbs} onChange={handleChange} />
         </div>
 
         <p style={{ marginBottom: 16 }}><strong>Калорийность:</strong> {calories} ккал / 100г</p>

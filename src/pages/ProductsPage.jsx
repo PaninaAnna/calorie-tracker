@@ -142,16 +142,16 @@ function ProductsPage() {
               editingId === p.id ? (
                 <tr key={p.id}>
                   <td>
-                    <input name="name" value={editForm.name} onChange={handleEditChange} style={{ width: '100%' }} />
+                    <input name="name" maxLength="60" value={editForm.name} onChange={handleEditChange} style={{ width: '100%' }} />
                   </td>
                   <td>
-                    <input name="proteins" type="number" step="0.1" value={editForm.proteins} onChange={handleEditChange} style={{ width: 70 }} />
+                    <input name="proteins" type="number" step="0.1" min="0" max="100" value={editForm.proteins} onChange={handleEditChange} style={{ width: 70 }} />
                   </td>
                   <td>
-                    <input name="fats" type="number" step="0.1" value={editForm.fats} onChange={handleEditChange} style={{ width: 70 }} />
+                    <input name="fats" type="number" step="0.1" min="0" max="100" value={editForm.fats} onChange={handleEditChange} style={{ width: 70 }} />
                   </td>
                   <td>
-                    <input name="carbs" type="number" step="0.1" value={editForm.carbs} onChange={handleEditChange} style={{ width: 70 }} />
+                    <input name="carbs" type="number" step="0.1" min="0" max="100" value={editForm.carbs} onChange={handleEditChange} style={{ width: 70 }} />
                   </td>
                   <td>
                     {Math.round((parseFloat(editForm.proteins) || 0) * 4 + (parseFloat(editForm.fats) || 0) * 9 + (parseFloat(editForm.carbs) || 0) * 4)}

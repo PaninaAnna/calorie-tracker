@@ -82,17 +82,17 @@ function ProfilePage() {
 
           <div className="form-group">
             <label>Вес (кг)</label>
-            <input name="weight" type="number" step="0.1" value={profile.weight} onChange={handleChange} />
+            <input name="weight" type="number" step="0.1" min="0.1" max="500" value={profile.weight} onChange={handleChange} />
           </div>
 
           <div className="form-group">
             <label>Рост (см)</label>
-            <input name="height" type="number" value={profile.height} onChange={handleChange} />
+            <input name="height" type="number" min="1" max="300" value={profile.height} onChange={handleChange} />
           </div>
 
           <div className="form-group">
             <label>Возраст</label>
-            <input name="age" type="number" value={profile.age} onChange={handleChange} />
+            <input name="age" type="number" min="1" max="150" value={profile.age} onChange={handleChange} />
           </div>
 
           <div className="form-group">

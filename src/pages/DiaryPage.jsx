@@ -331,6 +331,8 @@ function DiaryPage() {
                     value={grams}
                     onChange={e => setGrams(e.target.value)}
                     placeholder="г"
+                    min="1"
+                    max="10000"
                     style={{ width: 70 }}
                   />
                 </div>
