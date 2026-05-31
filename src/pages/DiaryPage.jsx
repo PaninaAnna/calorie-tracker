@@ -4,11 +4,17 @@ const MEAL_TABS = ['Завтрак', 'Обед', 'Ужин', 'Перекус']
 
 function DiaryPage() {
   const [activeTab, setActiveTab] = useState('Завтрак')
+  const [diary, setDiary] = useState(() => {
+    const saved = localStorage.getItem('diary')
+    return saved ? JSON.parse(saved) : []
+  })
   const [selectedProduct, setSelectedProduct] = useState('')
   const [grams, setGrams] = useState('')
   const [error, setError] = useState('')
 
   const products = JSON.parse(localStorage.getItem('products') || '[]')
+
+  const filteredEntries = diary.filter(e => e.mealType === activeTab)
 
   const handleAdd = (e) => {
     e.preventDefault()
@@ -38,11 +44,18 @@ function DiaryPage() {
       calories: +(product.calories * coefficient).toFixed(0)
     }
 
-    console.log('Добавлена запись:', entry)
-
+    const updated = [...diary, entry]
+    setDiary(updated)
+    localStorage.setItem('diary', JSON.stringify(updated))
     setSelectedProduct('')
     setGrams('')
     setError('')
+  }
+
+  const deleteEntry = (id) => {
+    const updated = diary.filter(e => e.id !== id)
+    setDiary(updated)
+    localStorage.setItem('diary', JSON.stringify(updated))
   }
 
   return (
@@ -97,7 +110,40 @@ function DiaryPage() {
         {error && <span style={{ color: 'red' }}>{error}</span>}
       </form>
 
-      <p>Активная вкладка: <strong>{activeTab}</strong></p>
+      {/* Список съеденного */}
+      <h3>{activeTab}</h3>
+      {filteredEntries.length === 0 ? (
+        <p>Пока ничего не добавлено</p>
+      ) : (
+        <table border="1" cellPadding="6" style={{ borderCollapse: 'collapse', width: '100%' }}>
+          <thead>
+            <tr>
+              <th>Продукт</th>
+              <th>Граммы</th>
+              <th>Белки</th>
+              <th>Жиры</th>
+              <th>Углеводы</th>
+              <th>Ккал</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredEntries.map(e => (
+              <tr key={e.id}>
+                <td>{e.productName}</td>
+                <td>{e.grams}г</td>
+                <td>{e.proteins}г</td>
+                <td>{e.fats}г</td>
+                <td>{e.carbs}г</td>
+                <td>{e.calories}ккал</td>
+                <td>
+                  <button onClick={() => deleteEntry(e.id)}>×</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </>
   )
 }
