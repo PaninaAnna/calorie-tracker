@@ -1,16 +1,10 @@
-# React + Vite
+# Calorie Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Веб-приложение для отслеживания питания с расчётом КБЖУ и аналитикой рациона.
 
-Currently, two official plugins are available:
+## Возможности
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **Дневник питания** — добавление приёмов пищи (завтрак, обед, ужин, перекус) с автопересчётом калорий, белков, жиров и углеводов. Шкалы прогресса показывают, сколько осталось до дневной нормы.
+- **База продуктов** — ведение справочника продуктов: добавление, редактирование, удаление, поиск и сортировка.
+- **Профиль** — расчёт персональной нормы КБЖУ по формуле Миффлина-Сан Жеора на основе веса, роста, возраста, пола, уровня активности и цели.
+- **История** — недельная аналитика в виде цветных столбиков БЖУ с навигацией по дням.
