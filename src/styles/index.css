@@ -185,3 +185,9 @@ button:hover {
   color: #888;
   margin-top: 12px;
 }
+
+/* Ссылка внутри текста */
+.counter a {
+  color: var(--color-primary);
+  font-weight: 500;
+}
