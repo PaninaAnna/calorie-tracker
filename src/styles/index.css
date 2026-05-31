@@ -1,0 +1,31 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background: #f0f0f0;
+  padding: 12px 20px;
+}
+
+nav {
+  display: flex;
+  gap: 16px;
+}
+
+nav a {
+  text-decoration: none;
+  color: #333;
+  padding: 6px 12px;
+  border-radius: 4px;
+}
+
+nav a.active {
+  background: #4caf50;
+  color: white;
+}
+
+main {
+  padding: 20px;
+}
