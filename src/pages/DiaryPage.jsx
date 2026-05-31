@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 
 const MEAL_TYPES = ['Завтрак', 'Обед', 'Ужин', 'Перекус']
 
@@ -17,11 +17,30 @@ function DiaryPage() {
   })
   const [addingTo, setAddingTo] = useState(null)
   const [editingId, setEditingId] = useState(null)
+  const [productSearch, setProductSearch] = useState('')
   const [selectedProduct, setSelectedProduct] = useState('')
   const [grams, setGrams] = useState('')
   const [error, setError] = useState('')
+  const [showDropdown, setShowDropdown] = useState(false)
+  const dropdownRef = useRef(null)
 
   const products = JSON.parse(localStorage.getItem('products') || '[]')
+
+  const filteredProducts = products.filter(p =>
+    p.name.toLowerCase().includes(productSearch.toLowerCase())
+  )
+
+  const selectedProductData = products.find(p => p.id === parseInt(selectedProduct))
+
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setShowDropdown(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [])
 
   const profile = useMemo(() => {
     const saved = localStorage.getItem('profile')
@@ -77,6 +96,7 @@ function DiaryPage() {
     }
 
     const product = products.find(p => p.id === parseInt(selectedProduct))
+    if (!product) return
     const coefficient = gramsNum / 100
 
     if (editingId) {
@@ -118,6 +138,7 @@ function DiaryPage() {
     setAddingTo(null)
     setEditingId(null)
     setSelectedProduct('')
+    setProductSearch('')
     setGrams('')
     setError('')
   }
@@ -126,6 +147,7 @@ function DiaryPage() {
     setEditingId(entry.id)
     setAddingTo(entry.mealType)
     setSelectedProduct(String(entry.productId))
+    setProductSearch(entry.productName)
     setGrams(String(entry.grams))
     setError('')
   }
@@ -134,6 +156,7 @@ function DiaryPage() {
     setAddingTo(null)
     setEditingId(null)
     setSelectedProduct('')
+    setProductSearch('')
     setGrams('')
     setError('')
   }
@@ -175,7 +198,6 @@ function DiaryPage() {
         <input type="date" value={selectedDate} onChange={handleDateChange} />
       </div>
 
-      {/* Шкалы прогресса */}
       {targets && (
         <div className="counter" style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
           <ProgressBar current={dayTotals.calories} target={targets.calories} label="Калории" unit=" ккал" color="#4caf50" />
@@ -191,7 +213,6 @@ function DiaryPage() {
         </div>
       )}
 
-      {/* Блоки по приёмам пищи */}
       {MEAL_TYPES.map(mealType => {
         const entries = getEntriesByMeal(mealType)
         const isAdding = addingTo === mealType
@@ -201,7 +222,8 @@ function DiaryPage() {
             marginBottom: 20,
             border: '1px solid #e0e0e0',
             borderRadius: 8,
-            overflow: 'hidden'
+            overflow: 'visible',
+            position: 'relative'
           }}>
             <div style={{
               background: '#fafafa',
@@ -229,21 +251,13 @@ function DiaryPage() {
                       <td>{e.calories} ккал</td>
                       <td style={{ width: 80 }}>
                         <div className="btn-group">
-                          <button
-                            className="btn-icon btn-edit"
-                            onClick={() => handleEdit(e)}
-                            title="Редактировать"
-                          >
+                          <button className="btn-icon btn-edit" onClick={() => handleEdit(e)} title="Редактировать">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                             </svg>
                           </button>
-                          <button
-                            className="btn-icon btn-delete"
-                            onClick={() => deleteEntry(e.id)}
-                            title="Удалить"
-                          >
+                          <button className="btn-icon btn-delete" onClick={() => deleteEntry(e.id)} title="Удалить">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                               <line x1="18" y1="6" x2="6" y2="18"/>
                               <line x1="6" y1="6" x2="18" y2="18"/>
@@ -258,14 +272,57 @@ function DiaryPage() {
             )}
 
             {isAdding ? (
-              <div style={{ padding: 12, background: '#f9f9f9', display: 'flex', gap: 8, alignItems: 'end', flexWrap: 'wrap' }}>
-                <div>
-                  <select value={selectedProduct} onChange={e => setSelectedProduct(e.target.value)}>
-                    <option value="">-- Продукт --</option>
-                    {products.map(p => (
-                      <option key={p.id} value={p.id}>{p.name} ({p.calories} ккал)</option>
-                    ))}
-                  </select>
+              <div style={{ padding: 12, background: '#f9f9f9', display: 'flex', gap: 8, alignItems: 'end', flexWrap: 'wrap', position: 'relative', zIndex: 10 }}>
+                <div ref={dropdownRef} style={{ position: 'relative', minWidth: 200 }}>
+                  <input
+                    type="text"
+                    value={productSearch}
+                    onChange={e => {
+                      setProductSearch(e.target.value)
+                      setSelectedProduct('')
+                      setShowDropdown(true)
+                    }}
+                    onFocus={() => setShowDropdown(true)}
+                    placeholder="Поиск продукта..."
+                    style={{ width: '100%' }}
+                  />
+                  {showDropdown && filteredProducts.length > 0 && (
+                    <div style={{
+                      position: 'absolute',
+                      top: '100%',
+                      left: 0,
+                      right: 0,
+                      maxHeight: 200,
+                      overflowY: 'auto',
+                      background: '#fff',
+                      border: '1px solid #ddd',
+                      borderRadius: 4,
+                      zIndex: 20,
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                    }}>
+                      {filteredProducts.map(p => (
+                        <div
+                          key={p.id}
+                          onClick={() => {
+                            setSelectedProduct(String(p.id))
+                            setProductSearch(p.name)
+                            setShowDropdown(false)
+                          }}
+                          style={{
+                            padding: '8px 10px',
+                            cursor: 'pointer',
+                            background: String(p.id) === selectedProduct ? '#e8f5e9' : 'transparent'
+                          }}
+                          onMouseEnter={e => e.currentTarget.style.background = '#f5f5f5'}
+                          onMouseLeave={e => {
+                            if (String(p.id) !== selectedProduct) e.currentTarget.style.background = 'transparent'
+                          }}
+                        >
+                          {p.name} <span style={{ color: '#888', fontSize: 12 }}>{p.calories} ккал</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div>
                   <input
@@ -289,6 +346,7 @@ function DiaryPage() {
                     setAddingTo(mealType)
                     setEditingId(null)
                     setSelectedProduct('')
+                    setProductSearch('')
                     setGrams('')
                     setError('')
                   }}
