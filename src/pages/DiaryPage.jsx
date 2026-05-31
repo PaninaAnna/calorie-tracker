@@ -2,8 +2,16 @@ import { useState } from 'react'
 
 const MEAL_TABS = ['Завтрак', 'Обед', 'Ужин', 'Перекус']
 
+function getToday() {
+  return new Date().toISOString().split('T')[0]
+}
+
 function DiaryPage() {
   const [activeTab, setActiveTab] = useState('Завтрак')
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const saved = localStorage.getItem('selectedDate')
+    return saved || getToday()
+  })
   const [diary, setDiary] = useState(() => {
     const saved = localStorage.getItem('diary')
     return saved ? JSON.parse(saved) : []
@@ -14,7 +22,25 @@ function DiaryPage() {
 
   const products = JSON.parse(localStorage.getItem('products') || '[]')
 
-  const filteredEntries = diary.filter(e => e.mealType === activeTab)
+  const filteredEntries = diary.filter(
+    e => e.mealType === activeTab && e.date === selectedDate
+  )
+
+  // КБЖУ за выбранный день
+  const dayEntries = diary.filter(e => e.date === selectedDate)
+  const dayTotals = dayEntries.reduce((acc, e) => {
+    acc.calories += e.calories
+    acc.proteins += e.proteins
+    acc.fats += e.fats
+    acc.carbs += e.carbs
+    return acc
+  }, { calories: 0, proteins: 0, fats: 0, carbs: 0 })
+
+  const handleDateChange = (e) => {
+    const date = e.target.value
+    setSelectedDate(date)
+    localStorage.setItem('selectedDate', date)
+  }
 
   const handleAdd = (e) => {
     e.preventDefault()
@@ -34,6 +60,7 @@ function DiaryPage() {
 
     const entry = {
       id: Date.now(),
+      date: selectedDate,
       mealType: activeTab,
       productId: product.id,
       productName: product.name,
@@ -62,12 +89,21 @@ function DiaryPage() {
     <>
       <h1>Дневник питания</h1>
 
+      <div style={{ marginBottom: 20 }}>
+        <label>Дата: </label>
+        <input
+          type="date"
+          value={selectedDate}
+          onChange={handleDateChange}
+        />
+      </div>
+
       <div className="counter">
-        <strong>Итого за день:</strong>{' '}
-        {diary.reduce((acc, e) => acc + e.calories, 0)} ккал |{' '}
-        Б: {diary.reduce((acc, e) => acc + e.proteins, 0).toFixed(1)}г |{' '}
-        Ж: {diary.reduce((acc, e) => acc + e.fats, 0).toFixed(1)}г |{' '}
-        У: {diary.reduce((acc, e) => acc + e.carbs, 0).toFixed(1)}г
+        <strong>Итого за {selectedDate}:</strong>{' '}
+        {dayTotals.calories} ккал |{' '}
+        Б: {dayTotals.proteins.toFixed(1)}г |{' '}
+        Ж: {dayTotals.fats.toFixed(1)}г |{' '}
+        У: {dayTotals.carbs.toFixed(1)}г
       </div>
 
       <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
