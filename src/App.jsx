@@ -4,6 +4,7 @@ import DiaryPage from './pages/DiaryPage'
 import ProductsPage from './pages/ProductsPage'
 import AddProductPage from './pages/AddProductPage'
 import ProfilePage from './pages/ProfilePage'
+import HistoryPage from './pages/HistoryPage'
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/products/add" element={<AddProductPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/history" element={<HistoryPage />} />
       </Routes>
     </Layout>
   )

@@ -10,6 +10,9 @@ function Layout({ children }) {
           <Link to="/" className={location.pathname === '/' ? 'active' : ''}>
             Дневник
           </Link>
+          <Link to="/history" className={location.pathname === '/history' ? 'active' : ''}>
+            История
+          </Link>
           <Link to="/products" className={location.pathname.startsWith('/products') ? 'active' : ''}>
             Продукты
           </Link>
