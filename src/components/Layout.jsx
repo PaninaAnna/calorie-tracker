@@ -13,6 +13,9 @@ function Layout({ children }) {
           <Link to="/products" className={location.pathname.startsWith('/products') ? 'active' : ''}>
             Продукты
           </Link>
+          <Link to="/profile" className={location.pathname === '/profile' ? 'active' : ''}>
+            Профиль
+          </Link>
         </nav>
       </header>
       <main>{children}</main>
