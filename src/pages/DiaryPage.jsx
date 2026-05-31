@@ -62,6 +62,15 @@ function DiaryPage() {
     <>
       <h1>Дневник питания</h1>
 
+      {/* Счётчик за день */}
+      <div style={{ background: '#e8f5e9', padding: 12, borderRadius: 8, marginBottom: 20 }}>
+        <strong>Итого за день:</strong>{' '}
+        {diary.reduce((acc, e) => acc + e.calories, 0)} ккал |{' '}
+      Б: {diary.reduce((acc, e) => acc + e.proteins, 0).toFixed(1)}г |{' '}
+      Ж: {diary.reduce((acc, e) => acc + e.fats, 0).toFixed(1)}г |{' '}
+      У: {diary.reduce((acc, e) => acc + e.carbs, 0).toFixed(1)}г
+      </div>
+      
       {/* Вкладки */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
         {MEAL_TABS.map(tab => (
