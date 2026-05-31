@@ -16,12 +16,12 @@ function ProductsPage() {
   return (
     <>
       <h1>База продуктов</h1>
-      <Link to="/products/add">+ Добавить продукт</Link>
+      <Link to="/products/add" className="btn-link">+ Добавить продукт</Link>
 
       {products.length === 0 ? (
-        <p>Нет продуктов. Добавьте первый!</p>
+        <p className="empty">Нет продуктов. Добавьте первый!</p>
       ) : (
-        <table border="1" cellPadding="8" style={{ marginTop: 16, borderCollapse: 'collapse', width: '100%' }}>
+        <table>
           <thead>
             <tr>
               <th>Название</th>
@@ -41,7 +41,7 @@ function ProductsPage() {
                 <td>{p.carbs}</td>
                 <td>{p.calories}</td>
                 <td>
-                  <button onClick={() => deleteProduct(p.id)}>Удалить</button>
+                  <button className="btn-delete" onClick={() => deleteProduct(p.id)}>×</button>
                 </td>
               </tr>
             ))}

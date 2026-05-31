@@ -62,16 +62,14 @@ function DiaryPage() {
     <>
       <h1>Дневник питания</h1>
 
-      {/* Счётчик за день */}
-      <div style={{ background: '#e8f5e9', padding: 12, borderRadius: 8, marginBottom: 20 }}>
+      <div className="counter">
         <strong>Итого за день:</strong>{' '}
         {diary.reduce((acc, e) => acc + e.calories, 0)} ккал |{' '}
-      Б: {diary.reduce((acc, e) => acc + e.proteins, 0).toFixed(1)}г |{' '}
-      Ж: {diary.reduce((acc, e) => acc + e.fats, 0).toFixed(1)}г |{' '}
-      У: {diary.reduce((acc, e) => acc + e.carbs, 0).toFixed(1)}г
+        Б: {diary.reduce((acc, e) => acc + e.proteins, 0).toFixed(1)}г |{' '}
+        Ж: {diary.reduce((acc, e) => acc + e.fats, 0).toFixed(1)}г |{' '}
+        У: {diary.reduce((acc, e) => acc + e.carbs, 0).toFixed(1)}г
       </div>
-      
-      {/* Вкладки */}
+
       <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
         {MEAL_TABS.map(tab => (
           <button
@@ -80,21 +78,13 @@ function DiaryPage() {
               setActiveTab(tab)
               setError('')
             }}
-            style={{
-              padding: '8px 16px',
-              background: activeTab === tab ? '#4caf50' : '#e0e0e0',
-              color: activeTab === tab ? 'white' : '#333',
-              border: 'none',
-              borderRadius: 4,
-              cursor: 'pointer'
-            }}
+            className={`tab-btn ${activeTab === tab ? 'active' : ''}`}
           >
             {tab}
           </button>
         ))}
       </div>
 
-      {/* Форма добавления */}
       <form onSubmit={handleAdd} style={{ marginBottom: 20, display: 'flex', gap: 10, alignItems: 'end', flexWrap: 'wrap' }}>
         <div>
           <label>Продукт:</label><br />
@@ -116,15 +106,14 @@ function DiaryPage() {
           />
         </div>
         <button type="submit">Добавить</button>
-        {error && <span style={{ color: 'red' }}>{error}</span>}
+        {error && <span className="error">{error}</span>}
       </form>
 
-      {/* Список съеденного */}
       <h3>{activeTab}</h3>
       {filteredEntries.length === 0 ? (
-        <p>Пока ничего не добавлено</p>
+        <p className="empty">Пока ничего не добавлено</p>
       ) : (
-        <table border="1" cellPadding="6" style={{ borderCollapse: 'collapse', width: '100%' }}>
+        <table>
           <thead>
             <tr>
               <th>Продукт</th>
@@ -146,7 +135,7 @@ function DiaryPage() {
                 <td>{e.carbs}г</td>
                 <td>{e.calories}ккал</td>
                 <td>
-                  <button onClick={() => deleteEntry(e.id)}>×</button>
+                  <button className="btn-delete" onClick={() => deleteEntry(e.id)}>×</button>
                 </td>
               </tr>
             ))}

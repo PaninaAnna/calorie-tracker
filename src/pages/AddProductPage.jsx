@@ -16,7 +16,6 @@ function AddProductPage() {
     setForm(prev => ({ ...prev, [name]: value }))
   }
 
-  // Автопересчёт калорий
   const proteins = parseFloat(form.proteins) || 0
   const fats = parseFloat(form.fats) || 0
   const carbs = parseFloat(form.carbs) || 0
@@ -59,7 +58,7 @@ function AddProductPage() {
     <>
       <h1>Добавить продукт</h1>
       <form onSubmit={handleSubmit} style={{ maxWidth: 400 }}>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {error && <p className="error">{error}</p>}
 
         <div style={{ marginBottom: 10 }}>
           <label>Название:</label><br />
@@ -81,7 +80,7 @@ function AddProductPage() {
           <input name="carbs" type="number" step="0.1" value={form.carbs} onChange={handleChange} style={{ width: '100%' }} />
         </div>
 
-        <p><strong>Калорийность:</strong> {calories} ккал / 100г</p>
+        <p style={{ marginBottom: 10 }}><strong>Калорийность:</strong> {calories} ккал / 100г</p>
 
         <button type="submit">Сохранить</button>
       </form>
